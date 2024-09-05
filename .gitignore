@@ -5,6 +5,13 @@ target/
 
 workspace.xml
 
+C:\projects\job4j_threads\.idea\checkstyle-idea.xml
+C:\projects\job4j_threads\.idea\dbnavigator.xml
+C:\projects\job4j_threads\.idea\encodings.xml
+C:\projects\job4j_threads\.idea\misc.xml
+C:\projects\job4j_threads\.idea\checkstyleidea-libs\readme.txt
+C:\projects\job4j_threads\.idea\vcs.xml
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
@@ -38,3 +45,9 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/.idea/checkstyle-idea.xml
+/.idea/dbnavigator.xml
+/.idea/encodings.xml
+/.idea/misc.xml
+/.idea/checkstyleidea-libs/readme.txt
+/.idea/vcs.xml
