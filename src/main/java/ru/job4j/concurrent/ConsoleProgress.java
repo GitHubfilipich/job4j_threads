@@ -20,7 +20,7 @@ public class ConsoleProgress implements Runnable {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                break;
+                e.printStackTrace();
             }
             System.out.printf("\r load: %c", process[index]);
             index = index == process.length - 1 ? 0 : index + 1;
