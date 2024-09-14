@@ -27,14 +27,17 @@ public class Wget implements Runnable {
             while ((bytesRead = input.read(dataBuffer, 0, dataBuffer.length)) != -1) {
                 output.write(dataBuffer, 0, bytesRead);
                 totalBytesRead += bytesRead;
-                if (totalBytesRead >= speed && System.currentTimeMillis() - downloadAt < 1
-                        && totalBytesRead / speed > 1) {
-                    try {
-                        Thread.sleep(totalBytesRead / speed - 1);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+                if (totalBytesRead >= speed) {
+                    var interval = System.currentTimeMillis() - downloadAt;
+                    if (interval < 1000) {
+                        try {
+                            Thread.sleep(totalBytesRead / speed * 1000L - interval);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                        totalBytesRead = 0;
+                        downloadAt = System.currentTimeMillis();
                     }
-                    downloadAt = System.currentTimeMillis();
                 }
             }
         } catch (IOException e) {
