@@ -45,4 +45,17 @@ class AccountStorageTest {
         assertThat(firstAccount.amount()).isEqualTo(0);
         assertThat(secondAccount.amount()).isEqualTo(200);
     }
+
+    @Test
+    void whenTransferFromAbsentAccountThenFalse() {
+        var storage = new AccountStorage();
+        assertThat(storage.transfer(1, 2, 100)).isFalse();
+    }
+
+    @Test
+    void whenTransferToAbsentAccountThenFalse() {
+        var storage = new AccountStorage();
+        storage.add(new Account(1, 100));
+        assertThat(storage.transfer(1, 2, 100)).isFalse();
+    }
 }
