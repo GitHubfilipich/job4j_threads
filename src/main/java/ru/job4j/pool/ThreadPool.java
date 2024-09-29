@@ -14,7 +14,7 @@ public class ThreadPool {
         for (int i = 0; i < Runtime.getRuntime().availableProcessors(); i++) {
             Thread thread = new Thread(() -> {
                 try {
-                    tasks.poll();
+                    tasks.poll().run();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -34,5 +34,14 @@ public class ThreadPool {
 
     public void shutdown() {
         threads.forEach(Thread::interrupt);
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        ThreadPool pool = new ThreadPool();
+        for (int i = 0; i < 5; i++) {
+            pool.work(() -> System.out.println(Thread.currentThread().getName()));
+        }
+        Thread.sleep(1000);
+        pool.shutdown();
     }
 }
