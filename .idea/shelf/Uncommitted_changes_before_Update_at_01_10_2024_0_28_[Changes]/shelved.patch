@@ -1,0 +1,99 @@
+Index: src/main/java/ru/job4j/pools/ParallelIndexSearch.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/ru/job4j/pools/ParallelIndexSearch.java b/src/main/java/ru/job4j/pools/ParallelIndexSearch.java
+new file mode 100644
+--- /dev/null	(date 1727725772209)
++++ b/src/main/java/ru/job4j/pools/ParallelIndexSearch.java	(date 1727725772209)
+@@ -0,0 +1,47 @@
++package ru.job4j.pools;
++
++import java.util.concurrent.ForkJoinPool;
++import java.util.concurrent.RecursiveTask;
++
++public class ParallelIndexSearch<V> extends RecursiveTask<Integer> {
++    private final V[] array;
++    private final int from;
++    private final int to;
++    private final V value;
++
++    public ParallelIndexSearch(V[] array, int from, int to, V value) {
++        this.array = array;
++        this.from = from;
++        this.to = to;
++        this.value = value;
++    }
++
++    @Override
++    protected Integer compute() {
++        int result = -1;
++        if (to - from < 10) {
++            for (int i = from; i <= to; i++) {
++                if (array[i] == value) {
++                    result = i;
++                    break;
++                }
++            }
++        } else {
++            int middle = (from + to) / 2;
++            ParallelIndexSearch<V> leftSearch = new ParallelIndexSearch<>(array, from, middle, value);
++            ParallelIndexSearch<V> rightSearch = new ParallelIndexSearch<>(array, middle + 1, to, value);
++            leftSearch.fork();
++            rightSearch.fork();
++            result = leftSearch.join();
++            if (result == -1) {
++                result = rightSearch.join();
++            }
++        }
++        return result;
++    }
++
++    public static <T> int indexOf(T[] array, T value) {
++        ForkJoinPool pool = new ForkJoinPool();
++        return pool.invoke(new ParallelIndexSearch<>(array, 0, array.length - 1, value));
++    }
++}
+Index: src/test/java/ru/job4j/pools/ParallelIndexSearchTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/java/ru/job4j/pools/ParallelIndexSearchTest.java b/src/test/java/ru/job4j/pools/ParallelIndexSearchTest.java
+new file mode 100644
+--- /dev/null	(date 1727727665321)
++++ b/src/test/java/ru/job4j/pools/ParallelIndexSearchTest.java	(date 1727727665321)
+@@ -0,0 +1,31 @@
++package ru.job4j.pools;
++
++import org.junit.jupiter.api.Test;
++import java.util.stream.IntStream;
++import static org.assertj.core.api.Assertions.*;
++
++class ParallelIndexSearchTest {
++    @Test
++    public void whenSearchInteger() {
++        Integer[] array = {10, 15, 20, 30, 15, 20, 30};
++        assertThat(ParallelIndexSearch.indexOf(array, 15)).isEqualTo(1);
++    }
++
++    @Test
++    public void whenSearchIntegerRecursive() {
++        Integer[] array = IntStream.range(0, 1000).boxed().toArray(Integer[]::new);
++        assertThat(ParallelIndexSearch.indexOf(array, 50)).isEqualTo(50);
++    }
++
++    @Test
++    public void whenSearchString() {
++        String[] array = {"job", "4", "j", "job", "4", "j", "job", "4", "j", "job", "4", "j"};
++        assertThat(ParallelIndexSearch.indexOf(array, "j")).isEqualTo(2);
++    }
++
++    @Test
++    public void whenSearchStringNotFound() {
++        String[] array = {"job", "4", "j", "job", "4", "j", "job", "4", "j", "job", "4", "j"};
++        assertThat(ParallelIndexSearch.indexOf(array, "java")).isEqualTo(-1);
++    }
++}
+\ No newline at end of file
