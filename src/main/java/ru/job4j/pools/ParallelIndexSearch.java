@@ -18,26 +18,24 @@ public class ParallelIndexSearch<V> extends RecursiveTask<Integer> {
 
     @Override
     protected Integer compute() {
-        int result = -1;
         if (to - from < 10) {
-            for (int i = from; i <= to; i++) {
-                if (array[i] == value) {
-                    result = i;
-                    break;
-                }
-            }
-        } else {
-            int middle = (from + to) / 2;
-            ParallelIndexSearch<V> leftSearch = new ParallelIndexSearch<>(array, from, middle, value);
-            ParallelIndexSearch<V> rightSearch = new ParallelIndexSearch<>(array, middle + 1, to, value);
-            leftSearch.fork();
-            rightSearch.fork();
-            result = leftSearch.join();
-            if (result == -1) {
-                result = rightSearch.join();
+            return getLinearResult();
+        }
+        int middle = (from + to) / 2;
+        ParallelIndexSearch<V> leftSearch = new ParallelIndexSearch<>(array, from, middle, value);
+        ParallelIndexSearch<V> rightSearch = new ParallelIndexSearch<>(array, middle + 1, to, value);
+        leftSearch.fork();
+        rightSearch.fork();
+        return Math.max(leftSearch.join(), rightSearch.join());
+    }
+
+    private int getLinearResult() {
+        for (int i = to; i >= from; i--) {
+            if (array[i] == value) {
+                return i;
             }
         }
-        return result;
+        return -1;
     }
 
     public static <T> int indexOf(T[] array, T value) {

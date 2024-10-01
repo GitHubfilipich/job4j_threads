@@ -8,7 +8,7 @@ class ParallelIndexSearchTest {
     @Test
     public void whenSearchInteger() {
         Integer[] array = {10, 15, 20, 30, 15, 20, 30};
-        assertThat(ParallelIndexSearch.indexOf(array, 15)).isEqualTo(1);
+        assertThat(ParallelIndexSearch.indexOf(array, 15)).isEqualTo(4);
     }
 
     @Test
@@ -20,7 +20,7 @@ class ParallelIndexSearchTest {
     @Test
     public void whenSearchString() {
         String[] array = {"job", "4", "j", "job", "4", "j", "job", "4", "j", "job", "4", "j"};
-        assertThat(ParallelIndexSearch.indexOf(array, "j")).isEqualTo(2);
+        assertThat(ParallelIndexSearch.indexOf(array, "j")).isEqualTo(11);
     }
 
     @Test
