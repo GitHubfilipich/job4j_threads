@@ -1,5 +1,6 @@
 package ru.job4j.pools;
 
+import java.util.Objects;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 
@@ -30,12 +31,13 @@ public class ParallelIndexSearch<V> extends RecursiveTask<Integer> {
     }
 
     private int getLinearResult() {
-        for (int i = to; i >= from; i--) {
-            if (array[i] == value) {
-                return i;
+        int result = -1;
+        for (int i = from; i <= to; i++) {
+            if (Objects.equals(array[i], value)) {
+                result = i;
             }
         }
-        return -1;
+        return result;
     }
 
     public static <T> int indexOf(T[] array, T value) {
